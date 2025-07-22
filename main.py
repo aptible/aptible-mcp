@@ -26,7 +26,7 @@ vhost_manager = VhostManager(api_client)
 app_manager.service_manager = service_manager
 
 
-@mcp.tool()
+@mcp.tool("List available accounts (aka environments).")
 async def list_accounts() -> List[Dict[str, Any]]:
     """
     List all accounts/environments.

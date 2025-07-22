@@ -4,21 +4,13 @@ import os
 import requests
 from requests.exceptions import HTTPError
 from pathlib import Path
+from time import sleep
 from typing import Any, Dict, Optional
 
-APTIBLE_API_URL = os.environ.get("APTIBLE_API_URL", "https://api.aptible.com")
-APTIBLE_AUTH_URL = os.environ.get("APTIBLE_AUTH_URL", "https://auth.aptible.com")
+
+APTIBLE_API_ROOT_URL = os.environ.get("APTIBLE_API_ROOT_URL", "https://api.aptible.com")
+APTIBLE_AUTH_ROOT_URL = os.environ.get("APTIBLE_AUTH_ROOT_URL", "https://auth.aptible.com")
 APTIBLE_TOKEN = os.environ.get("APTIBLE_TOKEN", None)
-
-
-def fetch_public_key() -> str:
-    """
-    Gets the public key used for signing JWTs
-    from the Aptible Auth API.
-    """
-    response = requests.get(APTIBLE_AUTH_URL)
-    public_key = response.json()["public_key"]
-    return public_key
 
 
 class AptibleApiClient:
@@ -26,8 +18,8 @@ class AptibleApiClient:
     Aptible API client for making authenticated requests to the API.
     """
     def __init__(self, api_url: Optional[str] = None, auth_url: Optional[str] = None) -> None:
-        self.api_url = api_url or APTIBLE_API_URL
-        self.auth_url = auth_url or APTIBLE_AUTH_URL
+        self.api_url = api_url or APTIBLE_API_ROOT_URL
+        self.auth_url = auth_url or APTIBLE_AUTH_ROOT_URL
         self._token = None
         
     def get_token(self) -> str:
@@ -56,12 +48,21 @@ class AptibleApiClient:
             
         return self._token
 
+    def fetch_public_key(self) -> str:
+        """
+        Gets the public key used for signing JWTs
+        from the Aptible Auth API.
+        """
+        response = requests.get(self.auth_url)
+        public_key = response.json()["public_key"]
+        return public_key
+
     def parsed_token(self) -> Dict[str, Any]:
         """
         Parse the authentication token.
         """
         token = self.get_token()
-        public_key = fetch_public_key()
+        public_key = self.fetch_public_key()
         kwargs = {
             'algorithms': ["RS256", "RS512"],
             'options': {
@@ -82,7 +83,7 @@ class AptibleApiClient:
         it's just here right now because that's where the token is.
         If a better place for this arises, please move it!
         """
-        response = requests.get(f"{APTIBLE_AUTH_URL}/organizations", headers=self._get_headers())
+        response = requests.get(f"{self.auth_url}/organizations", headers=self._get_headers())
         response.raise_for_status()
         orgs = response.json()["_embedded"]["organizations"]
         if orgs == 0:
@@ -103,7 +104,7 @@ class AptibleApiClient:
         Build the full URL for the API from just a path.
         """
         return f"{self.api_url}{path}" if not path.startswith("http") else path
-        
+
     def get(self, path: str) -> Any:
         """
         Make a GET request to Aptible API.
@@ -152,6 +153,7 @@ class AptibleApiClient:
         """
         done_states = ["succeeded", "failed"]
         while True:
+            sleep(1)
             try:
                 response = self.get(f"/operations/{operation_id}")
             except HTTPError as e:
