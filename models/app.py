@@ -1,8 +1,10 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, TYPE_CHECKING
 from pydantic import Field, computed_field
 
-from models import ServiceManager
 from models.base import ResourceBase, ResourceManager
+
+if TYPE_CHECKING:
+    from models import ServiceManager
 
 
 class App(ResourceBase):
@@ -40,7 +42,7 @@ class AppManager(ResourceManager[App, str]):
     resource_name = "apps"
     resource_model = App
     resource_url = "/apps"
-    service_manager: ServiceManager | None = None
+    service_manager: Optional["ServiceManager"] = None
 
     async def get_services(self, app_id: int):
         """
@@ -49,21 +51,19 @@ class AppManager(ResourceManager[App, str]):
         if not self.service_manager:
             raise Exception("ServiceManager not injected into AppManager")
 
-        return await self.service_manager.list_by_app(app_id)
+        return self.service_manager.list_by_app(app_id)
 
     async def create(self, data: Dict[str, Any]) -> App:
         """
         Create a new app.
         """
-        handle = data["handle"]
+        handle = data.get("handle")
         if not handle:
             raise Exception("A handle is required.")
-        account_id = data["account_id"]
-        if not handle:
+        account_id = data.get("account_id")
+        if not account_id:
             raise Exception("An account_id is required.")
-        docker_image = data["docker_image"]
-        if not handle:
-            raise Exception("A docker_image is required.")
+        docker_image = data.get("docker_image")
 
         response = self.api_client.post(f"/accounts/{account_id}/apps", data)
         app = self.resource_model.model_validate(response)
@@ -95,26 +95,13 @@ class AppManager(ResourceManager[App, str]):
         response = self.api_client.post(f"/apps/{app_id}/operations", operation_data)
         self.api_client.wait_for_operation(response["id"])
 
-    async def delete(self, app_id: int, account_id: Optional[int] = None) -> None:
+    async def delete(self, app_id: int) -> None:
         """
         Delete an app by handle.
         """
         app = await self.get_by_id(app_id)
         if not app:
-            raise Exception(f"App with ID {app_id} not found")
-
-        if not app and account_id:
-            all_apps = await self.list()
-            apps = [
-                a
-                for a in all_apps
-                if a.handle == app.handle and a.account_id == account_id
-            ]
-            if apps:
-                app = apps[0]
-
-        if not app:
-            raise Exception(f"No app found with handle {app.handle}")
+            raise Exception(f"App {app_id} not found")
 
         operation_data = {"type": "deprovision"}
         response = self.api_client.post(f"/apps/{app.id}/operations", operation_data)

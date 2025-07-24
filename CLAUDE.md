@@ -15,6 +15,24 @@ Aptible MCP is a Mission Control Protocol (MCP) integration for interacting with
 python main.py
 ```
 
+### Development Commands
+
+```bash
+# Run tests
+just test
+
+# Run a single test file
+APTIBLE_TOKEN="foobar" APTIBLE_API_ROOT_URL="http://localhost:3000" APTIBLE_AUTH_ROOT_URL="http://localhost:3001" python -m pytest -v -s tests/test_file.py
+
+# Run linting
+just lint
+
+# Format code and sort dependencies
+just pretty
+
+# Run type checking
+just typecheck
+```
 
 ## Authentication
 

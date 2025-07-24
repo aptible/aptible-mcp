@@ -1,14 +1,18 @@
 lint:
-    ruff check
-    ruff format --check
-    toml-sort --check pyproject.toml
+    uv run ruff check
+    uv run ruff format --check
+    uv run toml-sort --check pyproject.toml
 
 pretty:
-    ruff check --fix
-    ruff format
-    toml-sort pyproject.toml
+    uv run ruff check --fix
+    uv run ruff format
+    uv run toml-sort pyproject.toml
+
+test:
+    APTIBLE_TOKEN="foobar" \
+    APTIBLE_API_ROOT_URL="http://localhost:3000" \
+    APTIBLE_AUTH_ROOT_URL="http://localhost:3001" \
+    uv run python -m pytest -v -s tests/
 
 typecheck:
-    mypy --show-traceback .
-
-
+    uv run mypy --show-traceback .
