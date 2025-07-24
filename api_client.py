@@ -9,7 +9,9 @@ from typing import Any, Dict, Optional
 
 
 APTIBLE_API_ROOT_URL = os.environ.get("APTIBLE_API_ROOT_URL", "https://api.aptible.com")
-APTIBLE_AUTH_ROOT_URL = os.environ.get("APTIBLE_AUTH_ROOT_URL", "https://auth.aptible.com")
+APTIBLE_AUTH_ROOT_URL = os.environ.get(
+    "APTIBLE_AUTH_ROOT_URL", "https://auth.aptible.com"
+)
 APTIBLE_TOKEN = os.environ.get("APTIBLE_TOKEN", None)
 
 
@@ -17,35 +19,40 @@ class AptibleApiClient:
     """
     Aptible API client for making authenticated requests to the API.
     """
-    def __init__(self, api_url: Optional[str] = None, auth_url: Optional[str] = None) -> None:
+
+    def __init__(
+        self, api_url: Optional[str] = None, auth_url: Optional[str] = None
+    ) -> None:
         self.api_url = api_url or APTIBLE_API_ROOT_URL
         self.auth_url = auth_url or APTIBLE_AUTH_ROOT_URL
-        self._token = None
-        
+        self._token: str | None = None
+
     def get_token(self) -> str:
         """
         Get authentication token.
         """
         if self._token:
             return self._token
-            
+
         # Try to get from environment
         if APTIBLE_TOKEN:
             self._token = APTIBLE_TOKEN
             return self._token
-            
+
         # Try to get from file
         home = Path.home()
         try:
             with open(home / ".aptible" / "tokens.json") as f:
                 data = json.load(f)
                 self._token = data[self.auth_url]
-        except (FileNotFoundError, KeyError) as e:
-            raise Exception("Authentication token not found. Please login to Aptible CLI first.")
-            
+        except (FileNotFoundError, KeyError):
+            raise Exception(
+                "Authentication token not found. Please login to Aptible CLI first."
+            )
+
         if not self._token:
             raise Exception("You are not logged in")
-            
+
         return self._token
 
     def fetch_public_key(self) -> str:
@@ -63,15 +70,16 @@ class AptibleApiClient:
         """
         token = self.get_token()
         public_key = self.fetch_public_key()
-        kwargs = {
-            'algorithms': ["RS256", "RS512"],
-            'options': {
-                'verify_signature': True,
-                'verify_exp': True,
+        return jwt.decode(
+            token,
+            public_key,
+            algorithms=["RS256", "RS512"],
+            options={
+                "verify_signature": True,
+                "verify_exp": True,
             },
-            'leeway': 0,
-        }
-        return jwt.decode(token, public_key, **kwargs)
+            leeway=0,
+        )
 
     def organization_id(self) -> str:
         """
@@ -83,7 +91,9 @@ class AptibleApiClient:
         it's just here right now because that's where the token is.
         If a better place for this arises, please move it!
         """
-        response = requests.get(f"{self.auth_url}/organizations", headers=self._get_headers())
+        response = requests.get(
+            f"{self.auth_url}/organizations", headers=self._get_headers()
+        )
         response.raise_for_status()
         orgs = response.json()["_embedded"]["organizations"]
         if orgs == 0:
@@ -98,7 +108,7 @@ class AptibleApiClient:
             "Content-Type": "application/hal+json",
             "Authorization": f"Bearer {self.get_token()}",
         }
-        
+
     def _build_url(self, path: str) -> str:
         """
         Build the full URL for the API from just a path.
@@ -113,7 +123,7 @@ class AptibleApiClient:
         response = requests.get(url, headers=self._get_headers())
         response.raise_for_status()
         return response.json()
-        
+
     def post(self, path: str, data: Any) -> Any:
         """
         Make a POST request to Aptible API.
@@ -122,7 +132,7 @@ class AptibleApiClient:
         response = requests.post(url, headers=self._get_headers(), json=data)
         response.raise_for_status()
         return response.json()
-    
+
     def put(self, path: str, data: Any) -> Any:
         """
         Make a PUT request to Aptible API.
@@ -131,7 +141,7 @@ class AptibleApiClient:
         response = requests.put(url, headers=self._get_headers(), json=data)
         response.raise_for_status()
         return response.json()
-        
+
     def delete(self, path: str) -> Any:
         """
         Make a DELETE request to Aptible API.
@@ -139,13 +149,13 @@ class AptibleApiClient:
         url = self._build_url(path)
         response = requests.delete(url, headers=self._get_headers())
         response.raise_for_status()
-        
+
         # Some DELETE responses may not return content
         if response.status_code == 204 or not response.content:
             return None
-            
+
         return response.json()
-        
+
     def wait_for_operation(self, operation_id: str) -> None:
         """
         Waits on the operation to reach a completed state
@@ -164,5 +174,7 @@ class AptibleApiClient:
             status = response.get("status", "unknown")
             if status in done_states:
                 if status == "failed":
-                    raise Exception(f"Operation {operation_id} failed: {response.get('message', 'No error message')}")
+                    raise Exception(
+                        f"Operation {operation_id} failed: {response.get('message', 'No error message')}"
+                    )
                 return None
