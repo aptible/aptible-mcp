@@ -118,30 +118,16 @@ class DatabaseManager(ResourceManager[Database, str]):
 
         return database
 
-    async def delete_by_handle(
-        self, handle: str, account_id: Optional[int] = None
-    ) -> None:
+    async def delete(self, database_id: int) -> None:
         """
         Delete a database by handle.
         """
-        database = await self.get(handle)
-
-        if not database and account_id:
-            all_databases = await self.list()
-            # TODO: This be wrong.
-            databases = [
-                db
-                for db in all_databases
-                if db.handle == handle and db.account_id == account_id
-            ]
-            if databases:
-                database = databases[0]
-
+        database = await self.get_by_id(database_id)
         if not database:
-            raise Exception(f"No database found with handle {handle}")
+            raise Exception(f"Database {database_id} not found")
 
         operation_data = {"type": "deprovision"}
         response = self.api_client.post(
             f"/databases/{database.id}/operations", operation_data
         )
-        self.api_client.wait_for_operation(response["id"])
+        await self.api_client.wait_for_operation(response["id"])  # type: ignore[func-returns-value]

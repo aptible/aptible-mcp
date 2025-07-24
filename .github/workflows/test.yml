@@ -7,18 +7,28 @@ on:
     branches: [ "main" ]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Lint
-      run:  just lint
+      - name: Install just
+        run: sudo apt-get update && sudo apt-get install -y just
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
+      - name: Install uv
+        uses: astral-sh/setup-uv@7edac99f961f18b581bbd960d59d049f04c0002f  # v6.4.1
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-    - name: Typecheck
-      run:  just typecheck
+      - name: Install python packages
+        run: uv sync --locked --all-extras --dev
+
+      - name: Test
+        run: just test
+
+      - name: Lint
+        run:  just lint
+
+      - name: Typecheck
+        run:  just typecheck

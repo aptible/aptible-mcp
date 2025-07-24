@@ -8,13 +8,6 @@ from time import sleep
 from typing import Any, Dict, Optional
 
 
-APTIBLE_API_ROOT_URL = os.environ.get("APTIBLE_API_ROOT_URL", "https://api.aptible.com")
-APTIBLE_AUTH_ROOT_URL = os.environ.get(
-    "APTIBLE_AUTH_ROOT_URL", "https://auth.aptible.com"
-)
-APTIBLE_TOKEN = os.environ.get("APTIBLE_TOKEN", None)
-
-
 class AptibleApiClient:
     """
     Aptible API client for making authenticated requests to the API.
@@ -23,9 +16,13 @@ class AptibleApiClient:
     def __init__(
         self, api_url: Optional[str] = None, auth_url: Optional[str] = None
     ) -> None:
-        self.api_url = api_url or APTIBLE_API_ROOT_URL
-        self.auth_url = auth_url or APTIBLE_AUTH_ROOT_URL
-        self._token: str | None = None
+        self.api_url = api_url or os.environ.get(
+            "APTIBLE_API_ROOT_URL", "https://api.aptible.com"
+        )
+        self.auth_url = auth_url or os.environ.get(
+            "APTIBLE_AUTH_ROOT_URL", "https://auth.aptible.com"
+        )
+        self._token: Optional[str] = os.environ.get("APTIBLE_TOKEN", None)
 
     def get_token(self) -> str:
         """
@@ -34,12 +31,7 @@ class AptibleApiClient:
         if self._token:
             return self._token
 
-        # Try to get from environment
-        if APTIBLE_TOKEN:
-            self._token = APTIBLE_TOKEN
-            return self._token
-
-        # Try to get from file
+        # Try to get from ~/.aptible/tokens.json file
         home = Path.home()
         try:
             with open(home / ".aptible" / "tokens.json") as f:
@@ -60,6 +52,8 @@ class AptibleApiClient:
         Gets the public key used for signing JWTs
         from the Aptible Auth API.
         """
+        if not self.auth_url:
+            raise ValueError("Auth URL is not set")
         response = requests.get(self.auth_url)
         public_key = response.json()["public_key"]
         return public_key

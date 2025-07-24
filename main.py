@@ -164,7 +164,7 @@ async def delete_app(app_handle: str, account_handle: Optional[str] = None) -> N
         raise Exception(f"App {app_handle} not found.")
 
     app = App.model_validate(app_data)
-    await app_manager.delete(app.id, app.account_id())
+    await app_manager.delete(app.id)
 
 
 @mcp.tool()
@@ -255,7 +255,7 @@ async def delete_database(
         raise Exception(f"Database {database_handle} not found.")
 
     database = Database.model_validate(database_data)
-    await database_manager.delete_by_handle(database_handle, database.account_id())
+    await database_manager.delete(database.id)
 
 
 @mcp.tool()

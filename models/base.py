@@ -1,5 +1,8 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
-from pydantic import BaseModel, Field, model_validator
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, TYPE_CHECKING
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+if TYPE_CHECKING:
+    from api_client import AptibleApiClient
 
 T = TypeVar("T", bound=BaseModel)
 ID = TypeVar("ID")
@@ -13,8 +16,7 @@ class ResourceBase(BaseModel):
     id: int = Field(..., description="Resource unique identifier")
     links: Dict[str, Any] = Field({}, description="Links to related resources")
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
 
     @model_validator(mode="before")
     @classmethod
@@ -38,18 +40,18 @@ class ResourceManager(Generic[T, ID]):
 
     name_field: str = "handle"
 
-    def __init__(self, api_client):
+    def __init__(self, api_client: "AptibleApiClient") -> None:
         self.api_client = api_client
 
     async def list(self, **kwargs) -> List[T]:
         """
         List all resources.
         """
-        # ?per_page=5000 is a hacky way to avoid pagination that we shouldn't keep long-term.
-        # no_embed=true avoids some expensive/slow queries for data we're not using anyway.
-        response = self.api_client.get(
-            f"{self.resource_url}?per_page=5000&no_embed=true"
-        )
+        query_params = "?per_page=5000&no_embed=true"
+
+        response = self.api_client.get(f"{self.resource_url}{query_params}")
+        if "_embedded" not in response:
+            return []
         items = response["_embedded"][self.resource_name]
         return [self.resource_model.model_validate(item) for item in items]
 
@@ -66,17 +68,9 @@ class ResourceManager(Generic[T, ID]):
     async def get_by_id(self, obj_id: int, **kwargs) -> Optional[T]:
         """
         Get a specific resource by ID.
-
-        Note that sometimes the ID is a str (UUID) and
-        sometimes it's an int. It's on you to pass in
-        the correct format! If you pass in an int as a str
-        or a UUID as a UUID, there will not be a match!
         """
-        items = await self.list(**kwargs)
-        for item in items:
-            if getattr(item, "id", None) == obj_id:
-                return item
-        return None
+        item = self.api_client.get(f"{self.resource_url}/{obj_id}")
+        return self.resource_model.model_validate(item)
 
     async def create(self, data: Dict[str, Any]) -> T:
         """
