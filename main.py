@@ -412,5 +412,49 @@ async def list_service_vhosts(
     return [vhost.model_dump() for vhost in vhosts]
 
 
+@mcp.tool()
+async def generate_aptible_yml(before_release: str, after_deploy_success: str) -> str:
+    """
+    Generates a .aptible.yml file for use with Aptible.
+    The generated file should be stored in /.aptible/.aptible.yml
+
+    Inputs:
+    - before_release: The command that should be run before every deployment.
+                      This is a good place to run database migrations.
+    - after_deploy_success: The command that should be run after every deployment.
+    """
+    if not any([before_release, after_deploy_success]):
+        return ""
+
+    values = ["before_release:"]
+    if before_release:
+        values += [f"  - {before_release}"]
+    if after_deploy_success:
+        values += [f"  - {after_deploy_success}"]
+
+    return "\n".join(values)
+
+
+@mcp.tool()
+async def generate_procfile(processes: dict[str, str]) -> str:
+    """
+    Generates a Procfile for use with Aptible.
+    The generated file should be stored in /.aptible/Procfile
+
+    Remember that commands are executed by a shell. By using `exec` at the
+    beginning of a Procfile command, you replace the shell process with
+    your application's process. This ensures that signals properly sent to
+    your application.
+
+    Inputs:
+    - processes: A dictionary of { "process_name": "command" }. The process
+                 name must contain only letters, numbers, and underscores.
+    """
+    values = []
+    for key, value in processes.items():
+        values.append(f"{key}: {value}")
+    return "\n".join(values)
+
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
