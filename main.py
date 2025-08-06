@@ -29,7 +29,7 @@ vhost_manager = VhostManager(api_client)
 app_manager.service_manager = service_manager
 
 
-@mcp.tool("List available accounts (aka environments).")
+@mcp.tool()
 async def list_accounts() -> List[Dict[str, Any]]:
     """
     List all accounts/environments.
@@ -221,14 +221,13 @@ async def get_database(
     )
 
 
-@mcp.tool(
-    description="Create a new database. The image_id should be the ID found via list_available_database_types."
-)
+@mcp.tool()
 async def create_database(
     database_handle: str, account_handle: str, image_id: int
 ) -> Dict[str, Any]:
     """
-    Create a new database
+    Create a new database.
+    The image_id should be the ID found via list_available_database_types.
     """
     account = await account_manager.get(account_handle)
     if not account:
@@ -276,7 +275,7 @@ async def get_stack(stack_name: str) -> Optional[Dict[str, Any]]:
     return stack.model_dump() if stack else None
 
 
-@mcp.tool("List all Vhosts (aka Endpoints).")
+@mcp.tool()
 async def list_vhosts() -> List[Dict[str, Any]]:
     """
     List all vhosts/endpoints).
@@ -285,7 +284,7 @@ async def list_vhosts() -> List[Dict[str, Any]]:
     return [vhost.model_dump() for vhost in vhosts]
 
 
-@mcp.tool("Get a specific Vhost (aka Endpoint) by ID.")
+@mcp.tool()
 async def get_vhost(vhost_id: str) -> Optional[Dict[str, Any]]:
     """
     Get vhost by ID.
@@ -294,7 +293,7 @@ async def get_vhost(vhost_id: str) -> Optional[Dict[str, Any]]:
     return vhost.model_dump() if vhost else None
 
 
-@mcp.tool("Create a new Vhost (aka Endpoint) for a Service.")
+@mcp.tool()
 async def create_vhost(
     app_handle: str, service_handle: str, account_handle: Optional[str] = None
 ) -> Dict[str, Any]:
@@ -328,7 +327,7 @@ async def create_vhost(
     return vhost.model_dump()
 
 
-@mcp.tool("Delete a Vhost (aka Endpoint) by ID.")
+@mcp.tool()
 async def delete_vhost(vhost_id: int) -> None:
     """
     Delete a vhost/endpoint.
@@ -374,7 +373,7 @@ async def get_service(
     return service.model_dump()
 
 
-@mcp.tool("Scale a service by changing container count or size.")
+@mcp.tool()
 async def scale_service(
     app_handle: str,
     service_handle: str,
@@ -399,7 +398,7 @@ async def scale_service(
     return updated_service.model_dump()
 
 
-@mcp.tool("List all vhosts for a service.")
+@mcp.tool()
 async def list_service_vhosts(
     app_handle: str, service_handle: str, account_handle: Optional[str] = None
 ) -> List[Dict[str, Any]]:
