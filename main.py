@@ -68,7 +68,7 @@ async def create_account(account_name: str, stack_name: str) -> Dict[str, Any]:
     stack = await stack_manager.get(stack_name)
     if not stack:
         raise Exception(f"Stack {stack_name} not found.")
-    data = {"account_name": account_name, "stack_id": stack.id}
+    data = {"handle": account_name, "stack_id": stack.id}
     account = await account_manager.create(data)
     return account.model_dump()
 
@@ -131,7 +131,7 @@ async def create_app(
     if not account:
         raise Exception(f"Account {account_handle} not found.")
     data = {
-        "app_handle": app_handle,
+        "handle": app_handle,
         "account_id": account.id,
         "docker_image": docker_image,
     }
@@ -234,7 +234,7 @@ async def create_database(
         raise Exception(f"Account {account_handle} not found.")
 
     data = {
-        "database_handle": database_handle,
+        "handle": database_handle,
         "account_id": account.id,
         "image_id": image_id,
     }

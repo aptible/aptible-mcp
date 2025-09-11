@@ -246,7 +246,7 @@ async def test_create_account_success(mock_stack_manager, mock_account_manager):
 
     mock_stack_manager.get.assert_called_once_with("test-stack")
     mock_account_manager.create.assert_called_once_with(
-        {"account_name": "new-account", "stack_id": 123}
+        {"handle": "new-account", "stack_id": 123}
     )
     assert result["id"] == 42
     assert result["handle"] == "new-account"
@@ -520,7 +520,7 @@ async def test_create_app_success(mock_app_manager, mock_account_manager):
     mock_account_manager.get.assert_called_once_with("test-account")
     mock_app_manager.create.assert_called_once_with(
         {
-            "app_handle": "new-app",
+            "handle": "new-app",
             "account_id": 123,
             "docker_image": "example/image:latest",
         }
@@ -870,7 +870,7 @@ async def test_create_database_success(mock_database_manager, mock_account_manag
     mock_account_manager.get.assert_called_once_with("test-account")
     mock_database_manager.create.assert_called_once_with(
         {
-            "database_handle": "new-db",
+            "handle": "new-db",
             "account_id": 123,
             "image_id": 42,
         }
