@@ -1,6 +1,9 @@
 # Aptible MCP
 
-A Mission Control Protocol (MCP) integration for Aptible.
+An MCP server for [Aptible](https://www.aptible.com).
+
+> [!NOTE]
+> This MCP server is still under development.
 
 ## Overview
 
@@ -23,11 +26,44 @@ This project provides MCP tools for interacting with the Aptible API. It uses Py
 
 ## Usage
 
-Start the MCP server with:
+This MCP server assumes you are currently logged in via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/overview).
+
+Once logged in, start the MCP server with:
 
 ```bash
-python main.py
+uv run python main.py
 ```
+
+Or add the MCP server to your client config:
+
+```json
+{
+  "mcpServers": {
+    "aptible": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/path/to/the/mcp/server",
+        "run",
+        "main.py"
+      ]
+    }
+  }
+}
+```
+
+## Testing
+
+To run tests + linting
+
+```bash
+just test
+
+just typecheck
+
+just lint
+```
+
 
 ## Resource Models
 
