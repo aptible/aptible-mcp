@@ -1,6 +1,7 @@
 from models.account import Account, AccountManager
 from models.app import App, AppManager
 from models.database import Database, DatabaseImage, DatabaseManager
+from models.operation import Operation, OperationManager
 from models.service import Service, ServiceManager
 from models.stack import Stack, StackManager
 from models.vhost import Vhost, VhostManager
@@ -14,6 +15,8 @@ __all__ = [
     "Database",
     "DatabaseImage",
     "DatabaseManager",
+    "Operation",
+    "OperationManager",
     "Service",
     "ServiceManager",
     "Stack",

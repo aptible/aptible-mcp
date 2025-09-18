@@ -2,17 +2,18 @@ from mcp.server.fastmcp import FastMCP
 from typing import Any, Dict, List, Optional
 
 from api_client import AptibleApiClient
+from examples import aptible, github_actions
 from models import (
     AccountManager,
     App,
     AppManager,
     Database,
     DatabaseManager,
+    OperationManager,
     StackManager,
     VhostManager,
 )
 from models.service import Service, ServiceManager
-
 
 mcp = FastMCP("aptible")
 
@@ -23,6 +24,7 @@ api_client = AptibleApiClient()
 account_manager = AccountManager(api_client)
 app_manager = AppManager(api_client)
 database_manager = DatabaseManager(api_client)
+operation_manager = OperationManager(api_client)
 stack_manager = StackManager(api_client)
 service_manager = ServiceManager(api_client)
 vhost_manager = VhostManager(api_client)
@@ -410,6 +412,145 @@ async def list_service_vhosts(
 
     vhosts = await vhost_manager.list_by_service(service.id)
     return [vhost.model_dump() for vhost in vhosts]
+
+
+@mcp.tool()
+async def get_operations_for_app(
+    app_handle: str, account_handle: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific app.
+    """
+    app_data = await get_app(app_handle, account_handle)
+    if not app_data:
+        raise Exception(f"App {app_handle} not found.")
+
+    app = App.model_validate(app_data)
+    operations = await operation_manager.get_operations_for_app(app.id)
+    return operations
+
+
+@mcp.tool()
+async def get_operations_for_database(
+    database_handle: str, account_handle: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific database.
+    """
+    database_data = await get_database(database_handle, account_handle)
+    if not database_data:
+        raise Exception(f"Database {database_handle} not found.")
+
+    database = Database.model_validate(database_data)
+    operations = await operation_manager.get_operations_for_database(database.id)
+    return operations
+
+
+@mcp.tool()
+async def get_operations_for_vhost(vhost_id: int) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific vhost/endpoint.
+    """
+    operations = await operation_manager.get_operations_for_vhost(vhost_id)
+    return operations
+
+
+@mcp.tool()
+async def get_operation_logs(operation_id: int) -> str:
+    """
+    Get logs for a specific operation.
+    """
+    logs = await operation_manager.logs(operation_id)
+    return logs
+
+
+@mcp.tool()
+async def get_procfile_example() -> str:
+    """
+    Gets an example Procfile for defining app processes.
+    Keep in mind that 1-off tasks like running migrations are better suited
+    for processes run via .aptible.yml, and do not belong in the Procfile.
+
+
+    The finalized Procfile file should be located in /.aptible/Procfile
+    in the build Docker image.
+    """
+    return aptible.PROCFILE
+
+
+@mcp.tool()
+async def get_aptible_yaml_example() -> str:
+    """
+    Gets an example aptible.yml configuration file for deploy hooks.
+
+    The finalized .aptible.yml file should be located in /.aptible/.aptible.yml
+    in the build Docker image.
+    """
+    return aptible.APTIBLE_YAML
+
+
+@mcp.tool()
+async def get_endpoint_provision_example() -> str:
+    """
+    Gets an example of a GitHub Action for provisioning an endpoint.
+    """
+    return github_actions.PROVISION_ENDPOINT
+
+
+@mcp.tool()
+async def get_app_provision_example() -> str:
+    """
+    Gets an example of a GitHub Action for provisioning an app.
+    """
+    return github_actions.PROVISION_APP
+
+
+@mcp.tool()
+async def get_app_deprovision_example() -> str:
+    """
+    Gets an example of a GitHub Action for deprovisioning an app.
+    """
+    return github_actions.DEPROVISION_APP
+
+
+@mcp.tool()
+async def get_app_configure_example() -> str:
+    """
+    Gets an example of a GitHub Action for configuring an app.
+    """
+    return github_actions.CONFIGURE_APP
+
+
+@mcp.tool()
+async def get_database_provision_example() -> str:
+    """
+    Gets an example of a GitHub Action for provisioning a database.
+    """
+    return github_actions.PROVISION_DATABASE
+
+
+@mcp.tool()
+async def get_database_deprovision_example() -> str:
+    """
+    Gets an example of a GitHub Action for deprovisioning a database.
+    """
+    return github_actions.DEPROVISION_DATABASE
+
+
+@mcp.tool()
+async def get_database_restore_example() -> str:
+    """
+    Gets an example of a GitHub Action for restoring a database from backup.
+    """
+    return github_actions.RESTORE_FROM_BACKUP
+
+
+@mcp.tool()
+async def get_build_deploy_example() -> str:
+    """
+    Gets an example of a GitHub Action for building, publishing, and deploying an app.
+    """
+    return github_actions.BUILD_PUBLISH_DEPLOY
 
 
 if __name__ == "__main__":
