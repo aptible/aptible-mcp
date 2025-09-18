@@ -7,7 +7,7 @@ from models.base import ResourceBase, ResourceManager
 
 class Operation(ResourceBase):
     """
-    Database Images available for managed databases.
+    Aptible Operation model.
     """
 
     resource_id: int = Field(
@@ -33,7 +33,8 @@ class OperationManager(ResourceManager[Operation, str]):
         Get logs for an operation by fetching from the S3 URL endpoint.
         Returns the actual log content as a string.
         """
-        # Make the request directly without going through api_client to handle non-JSON responses
+        # Make the request directly without going through api_client
+        # since the result is not JSON.
         url = f"{self.api_client.api_url}/operations/{operation_id}/logs"
         headers = self.api_client._get_headers()
 
