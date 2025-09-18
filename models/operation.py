@@ -51,11 +51,8 @@ class OperationManager(ResourceManager[Operation, str]):
             if not log_response.content:
                 return f"No logs available for operation {operation_id} (empty content from redirect URL)"
             return log_response.text
-        else:
-            # Unexpected status code
-            raise Exception(
-                f"Unexpected status code {response.status_code} for operation {operation_id} logs"
-            )
+
+        return ""
 
     async def get_operations_for_app(self, app_id: int) -> List[Dict[str, Any]]:
         """
