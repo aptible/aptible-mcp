@@ -8,6 +8,7 @@ from models import (
     AppManager,
     Database,
     DatabaseManager,
+    OperationManager,
     StackManager,
     VhostManager,
 )
@@ -23,6 +24,7 @@ api_client = AptibleApiClient()
 account_manager = AccountManager(api_client)
 app_manager = AppManager(api_client)
 database_manager = DatabaseManager(api_client)
+operation_manager = OperationManager(api_client)
 stack_manager = StackManager(api_client)
 service_manager = ServiceManager(api_client)
 vhost_manager = VhostManager(api_client)
@@ -410,6 +412,56 @@ async def list_service_vhosts(
 
     vhosts = await vhost_manager.list_by_service(service.id)
     return [vhost.model_dump() for vhost in vhosts]
+
+
+@mcp.tool()
+async def get_operations_for_app(
+    app_handle: str, account_handle: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific app.
+    """
+    app_data = await get_app(app_handle, account_handle)
+    if not app_data:
+        raise Exception(f"App {app_handle} not found.")
+
+    app = App.model_validate(app_data)
+    operations = await operation_manager.get_operations_for_app(app.id)
+    return operations
+
+
+@mcp.tool()
+async def get_operations_for_database(
+    database_handle: str, account_handle: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific database.
+    """
+    database_data = await get_database(database_handle, account_handle)
+    if not database_data:
+        raise Exception(f"Database {database_handle} not found.")
+
+    database = Database.model_validate(database_data)
+    operations = await operation_manager.get_operations_for_database(database.id)
+    return operations
+
+
+@mcp.tool()
+async def get_operations_for_vhost(vhost_id: int) -> List[Dict[str, Any]]:
+    """
+    Get recent operations for a specific vhost/endpoint.
+    """
+    operations = await operation_manager.get_operations_for_vhost(vhost_id)
+    return operations
+
+
+@mcp.tool()
+async def get_operation_logs(operation_id: int) -> str:
+    """
+    Get logs for a specific operation.
+    """
+    logs = await operation_manager.logs(operation_id)
+    return logs
 
 
 if __name__ == "__main__":
