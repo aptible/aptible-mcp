@@ -26,15 +26,15 @@ This project provides MCP tools for interacting with the Aptible API. It uses Py
 
 ## Usage
 
-This MCP server assumes you are currently logged in via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/overview).
+This MCP server assumes you are currently logged in via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/overview). This README also assumes you have [uv](https://docs.astral.sh/uv/) and [just](https://github.com/casey/just) installed, which you can do using Homebrew by running `brew install uv just`.
 
-Once logged in, start the MCP server with:
+Once logged in via the Aptible CLI, start the MCP server with:
 
 ```bash
 uv run python main.py
 ```
 
-Or add the MCP server to your client config:
+Or add the MCP server to your client config (e.g. `~/Library/Application Support/Claude/claude_desktop_config.json` for Claude Desktop, or `~/.claude.json` for Claude Code):
 
 ```json
 {
@@ -43,7 +43,7 @@ Or add the MCP server to your client config:
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/the/mcp/server",
+        "/path/to/aptible-mcp",
         "run",
         "main.py"
       ]
