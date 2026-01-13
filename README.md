@@ -34,7 +34,7 @@ Once logged in via the Aptible CLI, start the MCP server with:
 uv run python main.py
 ```
 
-Or add the MCP server to your client config (e.g. `~/Library/Application Support/Claude/claude_desktop_config.json` for Claude Desktop, or `~/.claude.json` for Claude Code):
+Or add the MCP server to your client config:
 
 ```json
 {
@@ -51,6 +51,8 @@ Or add the MCP server to your client config (e.g. `~/Library/Application Support
   }
 }
 ```
+
+To determine where this configuration should live, reference the documentation for your MCP Client. For reference, Claude Desktop stores [its configuration](https://modelcontextprotocol.io/docs/develop/connect-local-servers) in `~/Library/Application Support/Claude/claude_desktop_config.json` on MacOS and `%APPDATA%\Claude\claude_desktop_config.json` on Windows. Claude Code stores [its configuration](https://code.claude.com/docs/en/settings) in `~/.claude.json`.
 
 ## Testing
 
