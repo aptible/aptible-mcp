@@ -19,8 +19,8 @@ jobs:
 
 PROVISION_APP = """
 jobs:
-  deprovision-app:
-    name: Deprovision Review App and Databases
+  provision-app:
+    name: Provision Review App
     runs-on: ubuntu-24.04
     steps:
       - name: Install aptible CLI
@@ -36,8 +36,8 @@ jobs:
 
 CONFIGURE_APP = """
 jobs:
-  deprovision-app:
-    name: Deprovision Review App and Databases
+  configure-app:
+    name: Configure App
     runs-on: ubuntu-24.04
     steps:
       - name: Install aptible CLI
@@ -60,8 +60,8 @@ jobs:
 
 DEPROVISION_DATABASE = """
 jobs:
-  deprovision-app:
-    name: Deprovision Review App and Databases
+  deprovision-database:
+    name: Deprovision Database
     runs-on: ubuntu-24.04
     steps:
       - name: Install aptible CLI
@@ -122,8 +122,8 @@ jobs:
 
 PROVISION_ENDPOINT = """
 jobs:
-  deprovision-app:
-    name: Deprovision Review App and Databases
+  provision-endpoint:
+    name: Provision App Endpoint
     runs-on: ubuntu-24.04
     steps:
       - name: Install aptible CLI
