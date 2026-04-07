@@ -32,7 +32,7 @@ app_manager.service_manager = service_manager
 
 
 @mcp.tool()
-async def list_accounts() -> List[Dict[str, Any]]:
+async def listAccounts() -> List[Dict[str, Any]]:
     """
     List all accounts/environments.
     """
@@ -41,7 +41,7 @@ async def list_accounts() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_account(account_handle: str) -> Optional[Dict[str, Any]]:
+async def getAccount(account_handle: str) -> Optional[Dict[str, Any]]:
     """
     Get account/environment by handle.
     """
@@ -50,7 +50,7 @@ async def get_account(account_handle: str) -> Optional[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_accounts_by_stack(stack_name: str) -> List[Dict[str, Any]]:
+async def getAccountsByStack(stack_name: str) -> List[Dict[str, Any]]:
     """
     Get all accounts/environments in a stack by stack name.
     """
@@ -63,7 +63,7 @@ async def get_accounts_by_stack(stack_name: str) -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def create_account(account_name: str, stack_name: str) -> Dict[str, Any]:
+async def createAccount(account_name: str, stack_name: str) -> Dict[str, Any]:
     """
     Create a new account/environment.
     """
@@ -76,7 +76,7 @@ async def create_account(account_name: str, stack_name: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-async def list_apps() -> List[Dict[str, Any]]:
+async def listApps() -> List[Dict[str, Any]]:
     """
     List all apps.
     """
@@ -85,7 +85,7 @@ async def list_apps() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_app(
+async def getApp(
     app_handle: str, account_handle: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
@@ -123,7 +123,7 @@ async def get_app(
 
 
 @mcp.tool()
-async def create_app(
+async def createApp(
     app_handle: str, account_handle: str, docker_image: str
 ) -> Dict[str, Any]:
     """
@@ -142,13 +142,13 @@ async def create_app(
 
 
 @mcp.tool()
-async def configure_app(
+async def configureApp(
     app_handle: str, account_handle: Optional[str], env: Dict[str, str]
 ) -> None:
     """
     Configure app environment variables.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -157,11 +157,11 @@ async def configure_app(
 
 
 @mcp.tool()
-async def delete_app(app_handle: str, account_handle: Optional[str] = None) -> None:
+async def deleteApp(app_handle: str, account_handle: Optional[str] = None) -> None:
     """
     Delete an app.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -170,7 +170,7 @@ async def delete_app(app_handle: str, account_handle: Optional[str] = None) -> N
 
 
 @mcp.tool()
-async def list_available_database_types() -> List[Dict[str, Any]]:
+async def listAvailableDatabaseTypes() -> List[Dict[str, Any]]:
     """
     List all available database types. When creating a database,
     the image id provided via this method is needed.
@@ -180,7 +180,7 @@ async def list_available_database_types() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def list_databases() -> List[Dict[str, Any]]:
+async def listDatabases() -> List[Dict[str, Any]]:
     """
     List all databases.
     """
@@ -189,7 +189,7 @@ async def list_databases() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_database(
+async def getDatabase(
     database_handle: str, account_handle: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
@@ -224,12 +224,12 @@ async def get_database(
 
 
 @mcp.tool()
-async def create_database(
+async def createDatabase(
     database_handle: str, account_handle: str, image_id: int
 ) -> Dict[str, Any]:
     """
     Create a new database.
-    The image_id should be the ID found via list_available_database_types.
+    The image_id should be the ID found via listAvailableDatabaseTypes.
     """
     account = await account_manager.get(account_handle)
     if not account:
@@ -245,13 +245,13 @@ async def create_database(
 
 
 @mcp.tool()
-async def delete_database(
+async def deleteDatabase(
     database_handle: str, account_handle: Optional[str] = None
 ) -> None:
     """
     Delete a database.
     """
-    database_data = await get_database(database_handle, account_handle)
+    database_data = await getDatabase(database_handle, account_handle)
     if not database_data:
         raise Exception(f"Database {database_handle} not found.")
 
@@ -260,7 +260,7 @@ async def delete_database(
 
 
 @mcp.tool()
-async def list_stacks() -> List[Dict[str, Any]]:
+async def listStacks() -> List[Dict[str, Any]]:
     """
     List all stacks.
     """
@@ -269,7 +269,7 @@ async def list_stacks() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_stack(stack_name: str) -> Optional[Dict[str, Any]]:
+async def getStack(stack_name: str) -> Optional[Dict[str, Any]]:
     """
     Get stack by name.
     """
@@ -278,7 +278,7 @@ async def get_stack(stack_name: str) -> Optional[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def list_vhosts() -> List[Dict[str, Any]]:
+async def listVhosts() -> List[Dict[str, Any]]:
     """
     List all vhosts/endpoints).
     """
@@ -287,7 +287,7 @@ async def list_vhosts() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_vhost(vhost_id: str) -> Optional[Dict[str, Any]]:
+async def getVhost(vhost_id: str) -> Optional[Dict[str, Any]]:
     """
     Get vhost by ID.
     """
@@ -296,7 +296,7 @@ async def get_vhost(vhost_id: str) -> Optional[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def create_vhost(
+async def createVhost(
     app_handle: str, service_handle: str, account_handle: Optional[str] = None
 ) -> Dict[str, Any]:
     """
@@ -310,7 +310,7 @@ async def create_vhost(
           Currently, since there's no tools for handling DNS, we only
           support creating the default on-aptible.com domains for Services.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -330,7 +330,7 @@ async def create_vhost(
 
 
 @mcp.tool()
-async def delete_vhost(vhost_id: int) -> None:
+async def deleteVhost(vhost_id: int) -> None:
     """
     Delete a vhost/endpoint.
     """
@@ -338,13 +338,13 @@ async def delete_vhost(vhost_id: int) -> None:
 
 
 @mcp.tool()
-async def list_services(
+async def listServices(
     app_handle: str, account_handle: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     List all services for a specific app.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -354,13 +354,13 @@ async def list_services(
 
 
 @mcp.tool()
-async def get_service(
+async def getService(
     app_handle: str, service_handle: str, account_handle: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Get a service by handle within a specific app.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -376,7 +376,7 @@ async def get_service(
 
 
 @mcp.tool()
-async def scale_service(
+async def scaleService(
     app_handle: str,
     service_handle: str,
     container_count: Optional[int] = None,
@@ -391,7 +391,7 @@ async def scale_service(
             "Must specify at least one of container_count or container_size"
         )
 
-    service_data = await get_service(app_handle, service_handle, account_handle)
+    service_data = await getService(app_handle, service_handle, account_handle)
     service = Service.model_validate(service_data)
 
     updated_service = await service_manager.scale(
@@ -401,13 +401,13 @@ async def scale_service(
 
 
 @mcp.tool()
-async def list_service_vhosts(
+async def listServiceVhosts(
     app_handle: str, service_handle: str, account_handle: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     List all vhosts for a specific service.
     """
-    service_data = await get_service(app_handle, service_handle, account_handle)
+    service_data = await getService(app_handle, service_handle, account_handle)
     service = Service.model_validate(service_data)
 
     vhosts = await vhost_manager.list_by_service(service.id)
@@ -415,13 +415,13 @@ async def list_service_vhosts(
 
 
 @mcp.tool()
-async def get_operations_for_app(
+async def getOperationsForApp(
     app_handle: str, account_handle: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     Get recent operations for a specific app.
     """
-    app_data = await get_app(app_handle, account_handle)
+    app_data = await getApp(app_handle, account_handle)
     if not app_data:
         raise Exception(f"App {app_handle} not found.")
 
@@ -431,13 +431,13 @@ async def get_operations_for_app(
 
 
 @mcp.tool()
-async def get_operations_for_database(
+async def getOperationsForDatabase(
     database_handle: str, account_handle: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     Get recent operations for a specific database.
     """
-    database_data = await get_database(database_handle, account_handle)
+    database_data = await getDatabase(database_handle, account_handle)
     if not database_data:
         raise Exception(f"Database {database_handle} not found.")
 
@@ -447,7 +447,7 @@ async def get_operations_for_database(
 
 
 @mcp.tool()
-async def get_operations_for_vhost(vhost_id: int) -> List[Dict[str, Any]]:
+async def getOperationsForVhost(vhost_id: int) -> List[Dict[str, Any]]:
     """
     Get recent operations for a specific vhost/endpoint.
     """
@@ -456,7 +456,7 @@ async def get_operations_for_vhost(vhost_id: int) -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-async def get_operation_logs(operation_id: int) -> str:
+async def getOperationLogs(operation_id: int) -> str:
     """
     Get logs for a specific operation.
     """
@@ -465,7 +465,7 @@ async def get_operation_logs(operation_id: int) -> str:
 
 
 @mcp.tool()
-async def get_procfile_example() -> str:
+async def getProcfileExample() -> str:
     """
     Gets an example Procfile for defining app processes.
     Keep in mind that 1-off tasks like running migrations are better suited
@@ -479,7 +479,7 @@ async def get_procfile_example() -> str:
 
 
 @mcp.tool()
-async def get_aptible_yaml_example() -> str:
+async def getAptibleYamlExample() -> str:
     """
     Gets an example aptible.yml configuration file for deploy hooks.
 
@@ -490,7 +490,7 @@ async def get_aptible_yaml_example() -> str:
 
 
 @mcp.tool()
-async def get_endpoint_provision_example() -> str:
+async def getEndpointProvisionExample() -> str:
     """
     Gets an example of a GitHub Action for provisioning an endpoint.
     """
@@ -498,7 +498,7 @@ async def get_endpoint_provision_example() -> str:
 
 
 @mcp.tool()
-async def get_app_provision_example() -> str:
+async def getAppProvisionExample() -> str:
     """
     Gets an example of a GitHub Action for provisioning an app.
     """
@@ -506,7 +506,7 @@ async def get_app_provision_example() -> str:
 
 
 @mcp.tool()
-async def get_app_deprovision_example() -> str:
+async def getAppDeprovisionExample() -> str:
     """
     Gets an example of a GitHub Action for deprovisioning an app.
     """
@@ -514,7 +514,7 @@ async def get_app_deprovision_example() -> str:
 
 
 @mcp.tool()
-async def get_app_configure_example() -> str:
+async def getAppConfigureExample() -> str:
     """
     Gets an example of a GitHub Action for configuring an app.
     """
@@ -522,7 +522,7 @@ async def get_app_configure_example() -> str:
 
 
 @mcp.tool()
-async def get_database_provision_example() -> str:
+async def getDatabaseProvisionExample() -> str:
     """
     Gets an example of a GitHub Action for provisioning a database.
     """
@@ -530,7 +530,7 @@ async def get_database_provision_example() -> str:
 
 
 @mcp.tool()
-async def get_database_deprovision_example() -> str:
+async def getDatabaseDeprovisionExample() -> str:
     """
     Gets an example of a GitHub Action for deprovisioning a database.
     """
@@ -538,7 +538,7 @@ async def get_database_deprovision_example() -> str:
 
 
 @mcp.tool()
-async def get_database_restore_example() -> str:
+async def getDatabaseRestoreExample() -> str:
     """
     Gets an example of a GitHub Action for restoring a database from backup.
     """
@@ -546,7 +546,7 @@ async def get_database_restore_example() -> str:
 
 
 @mcp.tool()
-async def get_build_deploy_example() -> str:
+async def getBuildDeployExample() -> str:
     """
     Gets an example of a GitHub Action for building, publishing, and deploying an app.
     """
