@@ -9,30 +9,30 @@ from models.stack import Stack
 from models.database import DatabaseImage
 from models.vhost import Vhost
 from main import (
-    list_accounts,
-    get_account,
-    get_accounts_by_stack,
-    create_account,
-    list_stacks,
-    get_stack,
-    list_apps,
-    get_app,
-    create_app,
-    configure_app,
-    delete_app,
-    list_available_database_types,
-    list_databases,
-    get_database,
-    create_database,
-    delete_database,
-    list_vhosts,
-    get_vhost,
-    create_vhost,
-    delete_vhost,
-    list_services,
-    get_service,
-    scale_service,
-    list_service_vhosts,
+    listAccounts,
+    getAccount,
+    getAccountsByStack,
+    createAccount,
+    listStacks,
+    getStack,
+    listApps,
+    getApp,
+    createApp,
+    configureApp,
+    deleteApp,
+    listAvailableDatabaseTypes,
+    listDatabases,
+    getDatabase,
+    createDatabase,
+    deleteDatabase,
+    listVhosts,
+    getVhost,
+    createVhost,
+    deleteVhost,
+    listServices,
+    getService,
+    scaleService,
+    listServiceVhosts,
 )
 
 
@@ -113,7 +113,7 @@ async def test_list_accounts(mock_account_manager):
     ]
     mock_account_manager.list = AsyncMock(return_value=mock_accounts)
 
-    result = await list_accounts()
+    result = await listAccounts()
     mock_account_manager.list.assert_called_once()
     assert len(result) == 2
     assert result[0]["id"] == 1
@@ -138,7 +138,7 @@ async def test_get_account_success(mock_account_manager):
     )
     mock_account_manager.get = AsyncMock(return_value=mock_account)
 
-    result = await get_account("test-account")
+    result = await getAccount("test-account")
     mock_account_manager.get.assert_called_once_with("test-account")
     assert result["id"] == 1
     assert result["handle"] == "test-account"
@@ -152,7 +152,7 @@ async def test_get_account_not_found(mock_account_manager):
     """
     mock_account_manager.get = AsyncMock(return_value=None)
 
-    result = await get_account("nonexistent-account")
+    result = await getAccount("nonexistent-account")
     mock_account_manager.get.assert_called_once_with("nonexistent-account")
     assert result is None
 
@@ -191,7 +191,7 @@ async def test_get_accounts_by_stack_success(mock_stack_manager, mock_account_ma
     ]
     mock_account_manager.get_by_stack_id = AsyncMock(return_value=mock_accounts)
 
-    result = await get_accounts_by_stack("test-stack")
+    result = await getAccountsByStack("test-stack")
 
     mock_stack_manager.get.assert_called_once_with("test-stack")
     mock_account_manager.get_by_stack_id.assert_called_once_with(123)
@@ -211,7 +211,7 @@ async def test_get_accounts_by_stack_not_found(mock_stack_manager):
     mock_stack_manager.get = AsyncMock(return_value=None)
 
     with pytest.raises(Exception) as excinfo:
-        await get_accounts_by_stack("nonexistent-stack")
+        await getAccountsByStack("nonexistent-stack")
 
     mock_stack_manager.get.assert_called_once_with("nonexistent-stack")
     assert "Stack nonexistent-stack not found" in str(excinfo.value)
@@ -242,7 +242,7 @@ async def test_create_account_success(mock_stack_manager, mock_account_manager):
     )
     mock_account_manager.create = AsyncMock(return_value=mock_account)
 
-    result = await create_account("new-account", "test-stack")
+    result = await createAccount("new-account", "test-stack")
 
     mock_stack_manager.get.assert_called_once_with("test-stack")
     mock_account_manager.create.assert_called_once_with(
@@ -261,7 +261,7 @@ async def test_create_account_stack_not_found(mock_stack_manager):
     mock_stack_manager.get = AsyncMock(return_value=None)
 
     with pytest.raises(Exception) as excinfo:
-        await create_account("new-account", "nonexistent-stack")
+        await createAccount("new-account", "nonexistent-stack")
 
     mock_stack_manager.get.assert_called_once_with("nonexistent-stack")
     assert "Stack nonexistent-stack not found" in str(excinfo.value)
@@ -294,7 +294,7 @@ async def test_list_stacks(mock_stack_manager):
     ]
     mock_stack_manager.list = AsyncMock(return_value=mock_stacks)
 
-    result = await list_stacks()
+    result = await listStacks()
 
     mock_stack_manager.list.assert_called_once()
     assert len(result) == 2
@@ -322,7 +322,7 @@ async def test_get_stack_success(mock_stack_manager):
     )
     mock_stack_manager.get = AsyncMock(return_value=mock_stack)
 
-    result = await get_stack("test-stack")
+    result = await getStack("test-stack")
 
     mock_stack_manager.get.assert_called_once_with("test-stack")
     assert result["id"] == 123
@@ -337,7 +337,7 @@ async def test_get_stack_not_found(mock_stack_manager):
     """
     mock_stack_manager.get = AsyncMock(return_value=None)
 
-    result = await get_stack("nonexistent-stack")
+    result = await getStack("nonexistent-stack")
 
     mock_stack_manager.get.assert_called_once_with("nonexistent-stack")
     assert result is None
@@ -368,7 +368,7 @@ async def test_list_apps(mock_app_manager):
     ]
     mock_app_manager.list = AsyncMock(return_value=mock_apps)
 
-    result = await list_apps()
+    result = await listApps()
 
     mock_app_manager.list.assert_called_once()
     assert len(result) == 2
@@ -396,7 +396,7 @@ async def test_get_app_single_match(mock_app_manager):
     ]
     mock_app_manager.list = AsyncMock(return_value=mock_apps)
 
-    result = await get_app("test-app")
+    result = await getApp("test-app")
 
     mock_app_manager.list.assert_called_once()
     assert result["id"] == 1
@@ -438,7 +438,7 @@ async def test_get_app_with_account(mock_app_manager, mock_account_manager):
     )
     mock_account_manager.get = AsyncMock(return_value=mock_account)
 
-    result = await get_app("test-app", "test-account")
+    result = await getApp("test-app", "test-account")
 
     mock_app_manager.list.assert_called_once()
     mock_account_manager.get.assert_called_once_with("test-account")
@@ -454,7 +454,7 @@ async def test_get_app_no_match(mock_app_manager):
     mock_app_manager.list = AsyncMock(return_value=[])
 
     with pytest.raises(Exception) as excinfo:
-        await get_app("nonexistent-app")
+        await getApp("nonexistent-app")
 
     mock_app_manager.list.assert_called_once()
     assert "No app with handle nonexistent-app" in str(excinfo.value)
@@ -486,7 +486,7 @@ async def test_get_app_multiple_matches_no_account(mock_app_manager):
     mock_app_manager.list = AsyncMock(return_value=mock_apps)
 
     with pytest.raises(Exception) as excinfo:
-        await get_app("test-app")
+        await getApp("test-app")
 
     mock_app_manager.list.assert_called_once()
     assert "Multiple apps found with handle test-app" in str(excinfo.value)
@@ -516,7 +516,7 @@ async def test_create_app_success(mock_app_manager, mock_account_manager):
     )
     mock_app_manager.create = AsyncMock(return_value=mock_app)
 
-    result = await create_app("new-app", "test-account", "example/image:latest")
+    result = await createApp("new-app", "test-account", "example/image:latest")
     mock_account_manager.get.assert_called_once_with("test-account")
     mock_app_manager.create.assert_called_once_with(
         {
@@ -538,7 +538,7 @@ async def test_create_app_account_not_found(mock_account_manager):
     mock_account_manager.get = AsyncMock(return_value=None)
 
     with pytest.raises(Exception) as excinfo:
-        await create_app("new-app", "nonexistent-account", "example/image:latest")
+        await createApp("new-app", "nonexistent-account", "example/image:latest")
 
     mock_account_manager.get.assert_called_once_with("nonexistent-account")
     assert "Account nonexistent-account not found" in str(excinfo.value)
@@ -560,12 +560,12 @@ async def test_configure_app_success(mock_app_manager):
 
     mock_app_manager.configure = AsyncMock()
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
         env_vars = {
             "DATABASE_URL": "postgres://user:pass@host:5432/db",
             "API_KEY": "secret-key",
         }
-        await configure_app("test-app", "test-account", env_vars)
+        await configureApp("test-app", "test-account", env_vars)
         mock_app_manager.configure.assert_called_once_with(1, env_vars)
 
 
@@ -574,9 +574,9 @@ async def test_configure_app_not_found():
     """
     Test configure_app raises an exception when app is not found.
     """
-    with patch("main.get_app", new=AsyncMock(return_value=None)):
+    with patch("main.getApp", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await configure_app("nonexistent-app", "test-account", {"KEY": "VALUE"})
+            await configureApp("nonexistent-app", "test-account", {"KEY": "VALUE"})
 
         assert "App nonexistent-app not found" in str(excinfo.value)
 
@@ -596,9 +596,9 @@ async def test_delete_app_success(mock_app_manager):
     }
 
     mock_app_manager.delete = AsyncMock()
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
         with patch("main.App.account_id", return_value=123):
-            await delete_app("test-app")
+            await deleteApp("test-app")
             mock_app_manager.delete.assert_called_once_with(1)
 
 
@@ -607,9 +607,9 @@ async def test_delete_app_not_found():
     """
     Test delete_app raises an exception when app is not found.
     """
-    with patch("main.get_app", new=AsyncMock(return_value=None)):
+    with patch("main.getApp", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await delete_app("nonexistent-app", "test-account")
+            await deleteApp("nonexistent-app", "test-account")
         assert "App nonexistent-app not found" in str(excinfo.value)
 
 
@@ -648,7 +648,7 @@ async def test_list_available_database_types(mock_database_manager):
     ]
     mock_database_manager.list_available_types = AsyncMock(return_value=mock_db_types)
 
-    result = await list_available_database_types()
+    result = await listAvailableDatabaseTypes()
 
     mock_database_manager.list_available_types.assert_called_once()
     assert len(result) == 2
@@ -693,7 +693,7 @@ async def test_list_databases(mock_database_manager):
     ]
     mock_database_manager.list = AsyncMock(return_value=mock_databases)
 
-    result = await list_databases()
+    result = await listDatabases()
 
     mock_database_manager.list.assert_called_once()
     assert len(result) == 2
@@ -725,7 +725,7 @@ async def test_get_database_single_match(mock_database_manager):
     ]
     mock_database_manager.list = AsyncMock(return_value=mock_databases)
 
-    result = await get_database("test-db")
+    result = await getDatabase("test-db")
 
     mock_database_manager.list.assert_called_once()
     assert result["id"] == 1
@@ -775,7 +775,7 @@ async def test_get_database_with_account(mock_database_manager, mock_account_man
     )
     mock_account_manager.get = AsyncMock(return_value=mock_account)
 
-    result = await get_database("test-db", "test-account")
+    result = await getDatabase("test-db", "test-account")
 
     mock_database_manager.list.assert_called_once()
     mock_account_manager.get.assert_called_once_with("test-account")
@@ -791,7 +791,7 @@ async def test_get_database_no_match(mock_database_manager):
     mock_database_manager.list = AsyncMock(return_value=[])
 
     with pytest.raises(Exception) as excinfo:
-        await get_database("nonexistent-db")
+        await getDatabase("nonexistent-db")
 
     mock_database_manager.list.assert_called_once()
     assert "No database with handle nonexistent-db" in str(excinfo.value)
@@ -831,7 +831,7 @@ async def test_get_database_multiple_matches_no_account(mock_database_manager):
     mock_database_manager.list = AsyncMock(return_value=mock_databases)
 
     with pytest.raises(Exception) as excinfo:
-        await get_database("test-db")
+        await getDatabase("test-db")
 
     mock_database_manager.list.assert_called_once()
     assert "Multiple databases found with handle test-db" in str(excinfo.value)
@@ -866,7 +866,7 @@ async def test_create_database_success(mock_database_manager, mock_account_manag
     )
     mock_database_manager.create = AsyncMock(return_value=mock_database)
 
-    result = await create_database("new-db", "test-account", 42)
+    result = await createDatabase("new-db", "test-account", 42)
     mock_account_manager.get.assert_called_once_with("test-account")
     mock_database_manager.create.assert_called_once_with(
         {
@@ -888,7 +888,7 @@ async def test_create_database_account_not_found(mock_account_manager):
     mock_account_manager.get = AsyncMock(return_value=None)
 
     with pytest.raises(Exception) as excinfo:
-        await create_database("new-db", "nonexistent-account", 42)
+        await createDatabase("new-db", "nonexistent-account", 42)
 
     mock_account_manager.get.assert_called_once_with("nonexistent-account")
     assert "Account nonexistent-account not found" in str(excinfo.value)
@@ -914,9 +914,9 @@ async def test_delete_database_success(mock_database_manager):
     # Use AsyncMock for the delete method to make it awaitable
     mock_database_manager.delete = AsyncMock()
 
-    with patch("main.get_database", new=AsyncMock(return_value=mock_database_data)):
+    with patch("main.getDatabase", new=AsyncMock(return_value=mock_database_data)):
         with patch("main.Database.account_id", return_value=123):
-            await delete_database("test-db", "test-account")
+            await deleteDatabase("test-db", "test-account")
             mock_database_manager.delete.assert_called_once_with(
                 mock_database_data["id"]
             )
@@ -927,9 +927,9 @@ async def test_delete_database_not_found():
     """
     Test delete_database raises an exception when database is not found.
     """
-    with patch("main.get_database", new=AsyncMock(return_value=None)):
+    with patch("main.getDatabase", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await delete_database("nonexistent-db", "test-account")
+            await deleteDatabase("nonexistent-db", "test-account")
 
         assert "Database nonexistent-db not found" in str(excinfo.value)
 
@@ -963,7 +963,7 @@ async def test_list_vhosts(mock_vhost_manager):
     ]
     mock_vhost_manager.list = AsyncMock(return_value=mock_vhosts)
 
-    result = await list_vhosts()
+    result = await listVhosts()
 
     mock_vhost_manager.list.assert_called_once()
     assert len(result) == 2
@@ -991,7 +991,7 @@ async def test_get_vhost_success(mock_vhost_manager):
     )
     mock_vhost_manager.get = AsyncMock(return_value=mock_vhost)
 
-    result = await get_vhost("1")
+    result = await getVhost("1")
 
     mock_vhost_manager.get.assert_called_once_with("1")
     assert result["id"] == 1
@@ -1006,7 +1006,7 @@ async def test_get_vhost_not_found(mock_vhost_manager):
     """
     mock_vhost_manager.get = AsyncMock(return_value=None)
 
-    result = await get_vhost("999")
+    result = await getVhost("999")
 
     mock_vhost_manager.get.assert_called_once_with("999")
     assert result is None
@@ -1067,8 +1067,8 @@ async def test_create_vhost_success(mock_service_manager, mock_vhost_manager):
     mock_service_manager.list_by_app = AsyncMock(return_value=mock_services)
     mock_vhost_manager.create = AsyncMock(return_value=mock_vhost)
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
-        result = await create_vhost("test-app", "web", "test-account")
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
+        result = await createVhost("test-app", "web", "test-account")
 
         mock_service_manager.list_by_app.assert_called_once_with(1)
         mock_vhost_manager.create.assert_called_once_with({"service_id": 123})
@@ -1084,9 +1084,9 @@ async def test_create_vhost_app_not_found():
     Test create_vhost raises an exception when app is not found.
     """
 
-    with patch("main.get_app", new=AsyncMock(return_value=None)):
+    with patch("main.getApp", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await create_vhost("nonexistent-app", "web", "test-account")
+            await createVhost("nonexistent-app", "web", "test-account")
 
         assert "App nonexistent-app not found" in str(excinfo.value)
 
@@ -1110,9 +1110,9 @@ async def test_create_vhost_service_not_found(mock_service_manager):
 
     mock_service_manager.list_by_app = AsyncMock(return_value=mock_services)
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
         with pytest.raises(Exception) as excinfo:
-            await create_vhost("test-app", "nonexistent-service", "test-account")
+            await createVhost("test-app", "nonexistent-service", "test-account")
 
         mock_service_manager.list_by_app.assert_called_once_with(1)
         assert (
@@ -1129,7 +1129,7 @@ async def test_delete_vhost(mock_vhost_manager):
 
     mock_vhost_manager.delete_vhost = AsyncMock()
 
-    await delete_vhost(42)
+    await deleteVhost(42)
     mock_vhost_manager.delete_vhost.assert_called_once_with(42)
 
 
@@ -1177,8 +1177,8 @@ async def test_list_services(mock_service_manager):
 
     mock_service_manager.list_by_app = AsyncMock(return_value=mock_services)
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
-        result = await list_services("test-app", "test-account")
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
+        result = await listServices("test-app", "test-account")
 
         mock_service_manager.list_by_app.assert_called_once_with(1)
 
@@ -1197,9 +1197,9 @@ async def test_list_services_app_not_found():
     Test list_services raises an exception when app is not found.
     """
 
-    with patch("main.get_app", new=AsyncMock(return_value=None)):
+    with patch("main.getApp", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await list_services("nonexistent-app", "test-account")
+            await listServices("nonexistent-app", "test-account")
 
         assert "App nonexistent-app not found" in str(excinfo.value)
 
@@ -1234,8 +1234,8 @@ async def test_get_service_success(mock_service_manager):
 
     mock_service_manager.get_by_handle_and_app = AsyncMock(return_value=mock_service)
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
-        result = await get_service("test-app", "web", "test-account")
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
+        result = await getService("test-app", "web", "test-account")
 
         mock_service_manager.get_by_handle_and_app.assert_called_once_with("web", 1)
 
@@ -1251,9 +1251,9 @@ async def test_get_service_app_not_found():
     Test get_service raises an exception when app is not found.
     """
 
-    with patch("main.get_app", new=AsyncMock(return_value=None)):
+    with patch("main.getApp", new=AsyncMock(return_value=None)):
         with pytest.raises(Exception) as excinfo:
-            await get_service("nonexistent-app", "web", "test-account")
+            await getService("nonexistent-app", "web", "test-account")
 
         assert "App nonexistent-app not found" in str(excinfo.value)
 
@@ -1275,9 +1275,9 @@ async def test_get_service_not_found(mock_service_manager):
 
     mock_service_manager.get_by_handle_and_app = AsyncMock(return_value=None)
 
-    with patch("main.get_app", new=AsyncMock(return_value=mock_app_data)):
+    with patch("main.getApp", new=AsyncMock(return_value=mock_app_data)):
         with pytest.raises(Exception) as excinfo:
-            await get_service("test-app", "nonexistent-service", "test-account")
+            await getService("test-app", "nonexistent-service", "test-account")
 
         mock_service_manager.get_by_handle_and_app.assert_called_once_with(
             "nonexistent-service", 1
@@ -1320,8 +1320,8 @@ async def test_scale_service_success(mock_service_manager):
 
     mock_service_manager.scale = AsyncMock(return_value=mock_updated_service)
 
-    with patch("main.get_service", new=AsyncMock(return_value=mock_service_data)):
-        result = await scale_service(
+    with patch("main.getService", new=AsyncMock(return_value=mock_service_data)):
+        result = await scaleService(
             "test-app",
             "web",
             container_count=4,
@@ -1343,7 +1343,7 @@ async def test_scale_service_no_parameters():
     Test scale_service raises an exception when no scaling parameters are provided.
     """
     with pytest.raises(ValueError) as excinfo:
-        await scale_service("test-app", "web", account_handle="test-account")
+        await scaleService("test-app", "web", account_handle="test-account")
 
     assert "Must specify at least one of container_count or container_size" in str(
         excinfo.value
@@ -1392,13 +1392,13 @@ async def test_list_service_vhosts(mock_vhost_manager):
 
     mock_vhost_manager.list_by_service = AsyncMock(return_value=mock_vhosts)
 
-    with patch("main.get_service", new=AsyncMock(return_value=mock_service_data)):
+    with patch("main.getService", new=AsyncMock(return_value=mock_service_data)):
         with patch("main.Service.model_validate") as mock_validate:
             mock_service = Mock()
             mock_service.id = 1
             mock_validate.return_value = mock_service
 
-            result = await list_service_vhosts("test-app", "web", "test-account")
+            result = await listServiceVhosts("test-app", "web", "test-account")
 
             mock_vhost_manager.list_by_service.assert_called_once_with(1)
 
