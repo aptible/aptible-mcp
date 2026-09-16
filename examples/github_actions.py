@@ -179,7 +179,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Deploy to Aptible
-        uses: aptible/aptible-deploy-action@v4
+        uses: aptible/aptible-deploy-action@v5
         with:
           username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
           password: ${{ secrets.APTIBLE_ROBOT_PASSWORD }}
