@@ -24,8 +24,8 @@ You may be able to use the MCP for other use cases, such as:
 
 ### What it doesn't do
 
-- **No runtime metrics.** There's no way to pull CPU, memory, disk, or request-rate/error-rate data for a running App or Database. Only operation status/logs are available. If you need metrics today, use the Aptible Dashboard or Metrics Tunnel directly.
-- **No live app/container log streaming.** Logs for a specific completed operation (via `getOperationLogs`) can be downloaded on demand, but tailing running app/container logs is not supported.
+- **No runtime metrics.** There's no way to pull CPU, memory, disk, or request-rate/error-rate data for a running App or Database. Only operation status/logs are available. If you need metrics today, use the Aptible Dashboard or [Metric Drains](https://www.aptible.com/docs/core-concepts/observability/metrics/metrics-drains/overview#metrics-drains) directly.
+- **No live app/container log streaming.** Logs for a specific completed operation (via `getOperationLogs`) can be downloaded on demand, but tailing running app/container logs is not supported. For that, use [Log Drains](https://www.aptible.com/docs/core-concepts/observability/logs/log-drains/overview) directly.
 - **No billing/usage data.**
 
 If you're interested in these additions or have suggestions for other ways you'd like to use this MCP server, submit an idea on our roadmap portal. We'd love to hear about your use case.
